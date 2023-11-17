@@ -1,6 +1,0 @@
-{
-  "C_Cpp.intelliSenseEngine": "default",
-  "C_Cpp.errorSquiggles": "disabled",
-  "idf.portWin": "COM4",
-  "idf.flashType": "UART"
-}
