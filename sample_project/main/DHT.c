@@ -1,4 +1,4 @@
-#include <stdio.h>
+//#include <stdio.h>
 #include "driver/gpio.h"
 #include "esp32/rom/gpio.h"
 #include "esp32/rom/ets_sys.h"

@@ -1,7 +1,10 @@
 {
   "C_Cpp.intelliSenseEngine": "default",
-  "idf.portWin": "COM4",
+  "files.associations": {
+    "DHT.C": "c"
+  },
   "idf.flashType": "UART",
-  "C_Cpp.errorSquiggles": "disabled",
-  "idf.adapterTargetName": "esp32"
+  "idf.portWin": "COM4",
+  "idf.adapterTargetName": "esp32",
+  "C_Cpp.errorSquiggles": "disabled"
 }

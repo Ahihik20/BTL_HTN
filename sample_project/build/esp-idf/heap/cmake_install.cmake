@@ -1,4 +1,4 @@
-# Install script for directory: E:/HK231/HE_THONG_NHUNG/esp-idf/components/heap
+# Install script for directory: E:/HK231/Espressif/esp-idf/components/heap
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

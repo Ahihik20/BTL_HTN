@@ -9,8 +9,9 @@
                 "${config:idf.espAdfPath}/components/**",
                 "${config:idf.espAdfPathWin}/components/**",
                 "${workspaceFolder}/**",
-                "E:/HK231/HE_THONG_NHUNG/esp-idf/components/log/include",
-                "E:/HK231/HE_THONG_NHUNG/esp-idf/components/driver/include"
+                "E:/HK231/Espressif/esp-idf/components/freertos/FreeRTOS-Kernel/include",
+                "E:/HK231/Espressif/esp-idf/components/log/include",
+                "E:/HK231/Espressif/esp-idf/components/driver/deprecated"
             ],
             "browse": {
                 "path": [

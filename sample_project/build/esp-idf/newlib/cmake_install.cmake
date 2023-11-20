@@ -1,4 +1,4 @@
-# Install script for directory: E:/HK231/HE_THONG_NHUNG/esp-idf/components/newlib
+# Install script for directory: E:/HK231/Espressif/esp-idf/components/newlib
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("E:/HK231/HE_THONG_NHUNG/sample_project/build/esp-idf/newlib/port/cmake_install.cmake")
+  include("E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build/esp-idf/newlib/port/cmake_install.cmake")
 endif()
 

@@ -1,4 +1,4 @@
-# Install script for directory: E:/HK231/HE_THONG_NHUNG/sample_project/main
+# Install script for directory: E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

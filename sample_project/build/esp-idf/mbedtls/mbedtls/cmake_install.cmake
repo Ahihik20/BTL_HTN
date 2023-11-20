@@ -1,4 +1,4 @@
-# Install script for directory: E:/HK231/HE_THONG_NHUNG/esp-idf/components/mbedtls/mbedtls
+# Install script for directory: E:/HK231/Espressif/esp-idf/components/mbedtls/mbedtls
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,9 +39,9 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("E:/HK231/HE_THONG_NHUNG/sample_project/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
-  include("E:/HK231/HE_THONG_NHUNG/sample_project/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
-  include("E:/HK231/HE_THONG_NHUNG/sample_project/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
+  include("E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build/esp-idf/mbedtls/mbedtls/include/cmake_install.cmake")
+  include("E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build/esp-idf/mbedtls/mbedtls/3rdparty/cmake_install.cmake")
+  include("E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build/esp-idf/mbedtls/mbedtls/library/cmake_install.cmake")
 
 endif()
 

@@ -1,4 +1,4 @@
-/* * Data converted from E:/HK231/HE_THONG_NHUNG/sample_project/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 .section .rodata.embedded
