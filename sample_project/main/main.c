@@ -67,9 +67,9 @@ typedef struct {
 dataDHT dht11; // data DHT11
 float soil_moisture_percentage; // data soid moisture sensor
 
-#define WIFI_SSID "Hoang" // access point name
-#define WIFI_PASS "12345689" // access point password
-#define BROKER_URL "mqtt://ahihi:aio_Zqmr890i9ayyOB9x4tPcygNAUnVX@io.adafruit.com" // url of Adafruit server
+#define WIFI_SSID "HV2002" // access point name
+#define WIFI_PASS "123456789" // access point password
+#define BROKER_URL "mqtt://ahihi:aio_bppf47tF4AX8gv1REfgyIFxrZTFh@io.adafruit.com" // url of Adafruit server
 #define TEMPERATURE "ahihi/feeds/temperature" // temperature is sent to this FEED
 #define HUMIDITY "ahihi/feeds/humidity" // humidity is sent to this FEED
 #define SOIL_MOISTURE "ahihi/feeds/soilmoisture"
@@ -78,15 +78,17 @@ float soil_moisture_percentage; // data soid moisture sensor
 static const char *TAG = "MQTT_EXAMPLE";
 
 esp_mqtt_client_handle_t mqtt_client;
-char * data = "none"; // data from feed "ahihi/feeds/co"
+char * data = "none"; // data from feed "ahihi/feeds/control"
 char * cTime = ""; // time to start turning on the pump
 char * realTime = ""; 
 long lTime = 0; // time to start turning on the pump
 long timeTurnOnPump = 0; //the amount of time the pump is on
-int checkReceiveData = 0;
-int counter_second; 
+int checkReceiveData = 0; // check whether there is data sent from feed "ahihi/feeds/control"
+//int counter_second; 
 char Current_Date_Time[100];
 int setSendPumpData = 0;
+float soil_moisture_level = 5;
+int statusPump = 0;
 
 //handling events about mqtt protocol
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
@@ -117,7 +119,11 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
             ESP_LOGI(TAG, "MQTT_EVENT_DATA");
             printf("TOPIC=%.*s\r\n", event->topic_len, event->topic);
             printf("DATA=%.*s\r\n", event->data_len, event->data);
-            data = event -> data;
+            //data = event -> data;
+            data = "";
+            data = (char *)malloc((event->data_len + 1) * sizeof(char));
+            strncpy(data,event->data,event->data_len);
+            printf("event-> data = %d ,data = %s\n",event->data_len,data);
             checkReceiveData = 1;
             break;
         case MQTT_EVENT_ERROR:
@@ -188,6 +194,7 @@ static void mqtt_app_start(void)
     };
     mqtt_client = esp_mqtt_client_init(&mqtt_cfg);
     esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, mqtt_client);
+    //esp_mqtt_client_register_event(mqtt_client, ESP_EVENT_ANY_ID, mqtt_event_handler, "");
     esp_mqtt_client_start(mqtt_client);
 }
 
@@ -260,21 +267,55 @@ void readDataDHT11(void)
         //vTaskDelay(1500 / portTICK_PERIOD_MS);
 }
 
+// void handleData(void){
+//     char* inputString = strdup(data);
+//     const char delimiter[] = " ";
+//     char *token;
+//     token = strtok(inputString, delimiter);
+//     char * time1 = token;
+//     char * time2 = "";
+//     while (token != NULL) {
+//         time2 = token;
+//         token = strtok(NULL, delimiter);
+//     }
+//     printf("%s %s\n", time1, time2);
+//     char*output;
+//     timeTurnOnPump = strtol(time2, &output, 10);
+//     cTime = time1;
+// }
+
 void handleData(void){
     char* inputString = strdup(data);
     const char delimiter[] = " ";
-    char *token;
-    token = strtok(inputString, delimiter);
-    char * time1 = token;
-    char * time2 = "";
-    while (token != NULL) {
-        time2 = token;
-        token = strtok(NULL, delimiter);
+    char *topic;
+    topic = strtok(inputString, delimiter);
+    if(strcmp(topic, "time") == 0){
+        timeTurnOnPump = 0;
+        int index = 0;
+        char * time1 = "";
+        char * time2 = "";
+        topic = strtok(NULL, delimiter);
+        time1 = topic;
+        topic = strtok(NULL, delimiter);
+        time2 = topic;
+        char* output;
+        timeTurnOnPump = strtol(time2, &output, 10);
+        cTime = time1;
     }
-    printf("%s %s\n", time1, time2);
-    char*output;
-    timeTurnOnPump = strtol(time2, &output, 10);
-    cTime = time1;
+    if(strcmp(topic,"pump") == 0){
+        statusPump = 0;
+        topic = strtok(NULL, delimiter);
+        char* output1;
+        statusPump = strtol(topic, &output1, 10);
+        pumpMode = 2;
+        counter = 10;
+    }
+    if(strcmp(topic,"soil") == 0){
+        soil_moisture_level = 0;
+        topic = strtok(NULL, delimiter);
+        char* output2;
+        soil_moisture_level = strtol(topic, &output2, 10);
+    }
 }
 
 // void handleData1(void){
@@ -351,40 +392,60 @@ void controlPump1(float soil_moisture_percentage){
         handleData();
         checkReceiveData = 0;
     }
-    int compare = strcmp(Current_Date_Time, cTime);
-    if(compare == 0 && timeTurnOnPump !=0){
-        counter = timeTurnOnPump;
-    }
-
-    if(counter > 0){
-        pumpMode = 1;
-        counter --;
-    }
-    else{
-        pumpMode = 0;
-        counter = 0;
-    }
-
-    if(pumpMode == 1) {
-        gpio_set_level (PUMP_GPIO_PIN , 1);
-        if(setSendPumpData == 0) {
-            msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "1", 0, 1, 0);
-            setSendPumpData = 1;
+    if(pumpMode == 2){
+        if(statusPump == 1){
+            gpio_set_level (PUMP_GPIO_PIN , 1);
+            if(setSendPumpData == 0) {
+                msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "1", 0, 1, 0);
+                setSendPumpData = 1;
+            }
         }
-    }
-    else{
-        if(soil_moisture_percentage > SOIL_MOISTURE_PERCENTAGE){
+        else{
             gpio_set_level (PUMP_GPIO_PIN , 0);
             if(setSendPumpData == 1) {
                 msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "0", 0, 1, 0);
                 setSendPumpData = 0;
             }
         }
+        counter --;
+        if(counter <= 0) pumpMode = 0;
+    }
+    else{
+        int compare = strcmp(Current_Date_Time, cTime);
+        if(compare == 0 && timeTurnOnPump !=0){
+            counter = timeTurnOnPump;
+        }
+
+        if(counter > 0){
+            pumpMode = 1;
+            counter --;
+        }
         else{
+            pumpMode = 0;
+            counter = 0;
+        }
+
+        if(pumpMode == 1) {
             gpio_set_level (PUMP_GPIO_PIN , 1);
             if(setSendPumpData == 0) {
                 msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "1", 0, 1, 0);
                 setSendPumpData = 1;
+            }
+        }
+        else{
+            if(soil_moisture_percentage > soil_moisture_level){
+                gpio_set_level (PUMP_GPIO_PIN , 0);
+                if(setSendPumpData == 1) {
+                    msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "0", 0, 1, 0);
+                    setSendPumpData = 0;
+                }
+            }   
+            else{
+                gpio_set_level (PUMP_GPIO_PIN , 1);
+                if(setSendPumpData == 0) {
+                    msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "1", 0, 1, 0);
+                    setSendPumpData = 1;
+                }
             }
         }
     }
@@ -402,9 +463,11 @@ void smartFarm(void *pvParameter){
         get_current_time();
         printf("Soil Moisture Percentage is: %.2f %% \n", soil_moisture_percentage);
         printf("Temp=%f, Humi=%f\r\n", dht11.Temp, dht11.Humi);
-        printf("timeToTurnOn = %ld ; cTime = %s\n",timeTurnOnPump, cTime);
         update_lcd_display(soil_moisture_percentage, dht11.Temp, dht11.Humi);
         controlPump1(soil_moisture_percentage);
+        printf("timeTurnOnPump: %ld, cTime: %s\n", timeTurnOnPump, cTime);
+        printf("soil_moisture_level: %f\n",soil_moisture_level);
+        printf("status pump: %d\n",statusPump);
         vTaskDelay(1000 / portTICK_PERIOD_MS);
     }
     vTaskDelete(NULL);
@@ -464,8 +527,6 @@ void app_main(void)
     setenv("TZ", "UTC-7", 1);
     tzset();
     int msg_id = esp_mqtt_client_publish(mqtt_client, PUMP, "0", 0, 1, 0);
-    //xTaskCreate(&getRealTime, "get real time", 2048*2, NULL, 5, NULL);
     xTaskCreate(&mainTask, "mainTask", 2048*2, NULL, 1, NULL);
-    //xTaskCreate(&readData, "Read Data", 2048, NULL, 2, NULL);
     xTaskCreate(&smartFarm, "Smart Farm", 2048, NULL, 3, NULL);
 }

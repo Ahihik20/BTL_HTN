@@ -1,7 +1,7 @@
 {
     "version":            "1",
     "project_name":       "main",
-    "project_version":    "c49f81a-dirty",
+    "project_version":    "7c88dee-dirty",
     "project_path":       "E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project",
     "idf_path":           "E:/HK231/Espressif/esp-idf",
     "build_dir":          "E:/HK231/HE_THONG_NHUNG/BTL_HTN/sample_project/build",
